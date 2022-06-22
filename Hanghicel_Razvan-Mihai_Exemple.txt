@@ -1,0 +1,144 @@
+-- Exercitiul 11 --
+
+1. Sa se afișeze în ordine crescătoare clienți după numărul de comenzi efectuate.
+SELECT a.nume, a.prenume, nr as "NUMAR COMENZI"
+from
+(select count(*) nr, id_client from comanda_client_ospatar
+group by id_client order by nr desc) b join clienti a on (b.id_client  = a.id_client)
+order by nr asc;
+
+2. Sa se afișeze numărul de comenzi pe care le-a preparat fiecare bucatar
+
+select a.nume, a.prenume, a.tip,
+(select count(*) from comanda_client_ospatar b where b.id_angajat=a.id_angajat)
+AS "COMENZI TOTALE"
+from angajati a, comanda_client_ospatar c
+where c.id_angajat=a.id_angajat and a.tip = 'bucatar'
+group by a.nume,a.prenume,a.id_angajat, a.tip;
+
+3. Sa se afișeze numele, salariul (dacă campul are valoarea null atunci se va afișa 0) și restaurantul în care lucrează ospatarii care l-au servit pe 'Gaitan Rares'
+
+select angajat.nume NUME, NVL(angajat.salariu, 0) as salariu,
+DECODE(l.id_locatie,
+    1, 'Anturaj',
+        2,'Casa Romascana',
+        3, 'MGH',
+        4, 'Pizza 21',
+        5, 'Dristor',
+    'ALTA LOCATIE') AS Restaurant
+FROM LOCATIE L, RESTAURANT R, ANGAJATI angajat, COMANDA_CLIENT_OSPATAR cco , CLIENTi c
+where CONCAT(lower(c.nume),lower(c.prenume))='gaitanrares' and c.id_client = cco.id_client and cco.id_angajat = angajat.id_angajat and angajat.id_restaurant = r.id_restaurant and r.id_locatie = l.id_locatie;
+
+4. Sa se afiseze salariul total al angajaților care lucrează în restaurantul Anturaj
+
+WITH salariu_bucatari AS ( SELECT sum(a.salariu) suma FROM ANGAJATI a JOIN RESTAURANT r ON (a.id_restaurant =r.id_restaurant and r.nume = 'Anturaj') WHERE tip = 'bucatar'),
+                          
+     salariu_ospatari AS ( SELECT sum(a.salariu) suma FROM ANGAJATI a JOIN RESTAURANT r ON (a.id_restaurant =r.id_restaurant and r.nume = 'Anturaj') WHERE tip = 'ospatar'),
+                          
+     salariu_total_union AS ( SELECT * FROM salariu_ospatari UNION SELECT * FROM salariu_bucatari),
+     salariu_total AS ( SELECT sum(suma) AS "SALARIUL TOTAL" FROM salariu_total_union)
+select *
+FROM salariu_total;
+
+5. Sa se afiseze locurile în care a comandat Stoica Vlad
+
+SELECT adresa
+from locatie
+where id_locatie in (
+select id_locatie from restaurant r JOIN angajati angajat ON (r.id_restaurant = angajat.id_restaurant)
+JOIN comanda_client_ospatar a on (angajat.id_angajat = a.id_angajat)
+JOIN CLIENTI c on (a.id_Client = c.id_client and CONCAT(lower(c.nume),lower(c.prenume))='stoicavlad'));
+
+6. Pentru fiecare angajat care este ospatar și pentru care prenumele începe cu litera M sa se afiseze datele sale și în funcție de vechime salariul să fie modificat astfel:
+- dacă are mai mult de 5 ani de vechime salariul se triplează
+- dacă are mai puțin de 5 ani de vechime salariul se dublează
+
+select nume,prenume,tip,data_angajarii, salariu,
+CASE
+    WHEN MONTHS_BETWEEN(SYSDATE, data_angajarii) > 60 then salariu * 3
+    WHEN MONTHS_BETWEEN(SYSDATE, data_angajarii) < 60 then salariu * 2
+    ELSE salariu
+    END "NOUL  SALARIU"
+FROM angajati
+where tip = 'ospatar' and prenume like 'M%'
+
+-- Exercitiul 12 -- 
+
+1. Sa se mareasca cu 2000 salariul angajatilor care au mai puțin de 3 ani de vechime.
+
+update angajati set salariu = salariu + 2000
+where tip = 'ospatar' and months_between(sysdate, data_angajarii) < 36;
+select * from angajati where tip = 'ospatar';
+
+2. Sa se modifice data de angajare pentru toți angajații care au vechime mai mica de 2 ani. Data de angajare va fi data actuala
+
+update angajati
+set data_angajarii = sysdate
+where months_between(sysdate, data_angajarii) < 24;
+
+select * from angajati
+
+3. Modificați toate locațiile pentru care adresa nu începe cu P. Se va pune ‘nedefinita’ în locul adresei actuale
+
+update locatie
+set adresa = 'nedefinita'
+where adresa not like 'P%'
+
+select * from locatie
+
+-- Exercitiul 13 -- 
+
+Create sequence inregistrari
+Increment by 1
+Start with 1
+Minvalue 0
+Maxvalue 100
+Nocycle
+Order;  
+
+-- Exercitiul 14 --
+
+create view view_restaurant_locatie (id_res, nume_res, id_locatie, adresa) as (
+    select r.id_restaurant, r.nume, l.id_locatie, l.adresa from restaurant r, locatie l where r.id_locatie = l.id_locatie);
+
+Exemplu de operatie LMD permisa:
+    update test_viz
+set nume_res = 'undefined'
+where adresa = 'nedefinita';
+
+Exemplu de operație LMD nepermisa:
+    delete from view_restaurant_locatie
+where adresa = 'nedefinita';
+
+-- Exercitiul 15 -- 
+
+CREATE TABLE rest
+(id_rest  NUMBER(3) CONSTRAINT pk_id_rest PRIMARY KEY,
+ nume  VARCHAR2(50)  NOT NULL
+)
+ORGANIZATION INDEX;
+
+CREATE TABLE loc
+(id_loc  NUMBER(3) CONSTRAINT pk_id_loc PRIMARY KEY,
+ nume  VARCHAR2(50)  NOT NULL
+);
+
+select * from rest
+
+insert into rest(id_rest, nume)
+values(1, 'restaurantul 1');
+
+insert into rest(id_rest, nume)
+values(2, 'restaurantul 2');
+
+insert into rest(id_rest, nume)
+values(3, 'restaurantul 3');
+
+insert into rest(id_rest, nume)
+values(4, 'restaurantul 4');
+
+select rowid, a.* from rest a;
+
+
+
+

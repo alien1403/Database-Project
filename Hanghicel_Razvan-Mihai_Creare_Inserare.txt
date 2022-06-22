@@ -1,0 +1,421 @@
+-- creare si inserare in tabelul FURNIZOR -- 
+
+CREATE TABLE FURNIZOR
+(
+id_furnizor number(4),
+nume VARCHAR2(25) NOT NULL
+);
+ALTER TABLE FURNIZOR
+ADD CONSTRAINT pk_furnizor PRIMARY KEY(id_furnizor);
+
+CREATE SEQUENCE SEQ_FURNIZOR
+INCREMENT by 1
+START WITH 0
+MINVALUE 0
+MAXVALUE 50
+NOCYCLE;
+
+INSERT INTO FURNIZOR(id_furnizor, nume)
+VALUES(SEQ_FURNIZOR.nextval, 'EMAG');
+INSERT INTO FURNIZOR(id_furnizor, nume)
+VALUES(SEQ_FURNIZOR.nextval, 'FERMA MEA');
+INSERT INTO FURNIZOR(id_furnizor, nume)
+VALUES(SEQ_FURNIZOR.nextval, 'GRADINA BUNICII');
+INSERT INTO FURNIZOR(id_furnizor, nume)
+VALUES(SEQ_FURNIZOR.nextval, 'CARREFOUR');
+INSERT INTO FURNIZOR(id_furnizor, nume)
+VALUES(SEQ_FURNIZOR.nextval, 'METRO');
+
+select *
+from FURNIZOR;
+
+-- creare si inserare in tabelul LOCATIE -- 
+
+CREATE TABLE LOCATIE
+(
+id_locatie number(3) constraint pk_LOCATIE primary key,
+adresa VARCHAR2(60) not null
+);
+
+
+CREATE SEQUENCE SEQ_LOCATIE
+INCREMENT BY 1
+START WITH 1
+MINVALUE 0  
+MAXVALUE 100
+NOCYCLE
+NOCACHE
+ORDER;
+
+INSERT INTO LOCATIE(id_locatie, adresa)
+VALUES(SEQ_LOCATIE.nextval, 'Piata Roman Voda, Roman, 617226'); -- Anturaj
+INSERT INTO LOCATIE(id_locatie, adresa)
+VALUES(SEQ_LOCATIE.nextval, 'Strada Ștefan cel Mare, Roman 617246'); -- Casa Romascana
+INSERT INTO LOCATIE(id_locatie, adresa)
+VALUES(SEQ_LOCATIE.nextval, 'Pietonal Ștefan cel Mare 17, Roman 617135');-- MGH
+INSERT INTO LOCATIE(id_locatie, adresa)
+VALUES(SEQ_LOCATIE.nextval, 'Strada Tineretului 22, Roman 617135');-- Pizza 21
+INSERT INTO LOCATIE(id_locatie, adresa)
+VALUES(SEQ_LOCATIE.nextval, 'Bulevardul Camil Ressu, sector 3 2 A, București 011135'); -- Dristor
+
+select * from LOCATIE;
+
+-- creare si inserare in tabelul RESTAURANT -- 
+
+CREATE TABLE RESTAURANT
+(
+id_restaurant number(4) constraint pk_restaurant primary key,
+id_locatie number(4) constraint fk_loc foreign key(id_locatie) references LOCATIE(id_locatie),
+id_furnizor number(4) constraint fk_colab foreign key(id_furnizor) references furnizor(id_furnizor)
+nume varchar2(25) not null,
+);
+CREATE SEQUENCE SEQ_RESTAURANT
+INCREMENT BY 1
+START WITH 0
+MINVALUE 0  
+MAXVALUE 100
+NOCYCLE
+NOCACHE
+ORDER;
+
+INSERT INTO RESTAURANT(id_restaurant, id_locatie, id_furnizor, nume)
+VALUES(SEQ_RESTAURANT.nextval, 1, 5, 'Anturaj');
+INSERT INTO RESTAURANT(id_restaurant, id_locatie, id_furnizor, nume)
+VALUES(SEQ_RESTAURANT.nextval, 2, 3, 'Casa Romascana');
+INSERT INTO RESTAURANT(id_restaurant, id_locatie, id_furnizor, nume)
+VALUES(SEQ_RESTAURANT.nextval, 3, 3, 'MGH');
+INSERT INTO RESTAURANT(id_restaurant, id_locatie, id_furnizor, nume)
+VALUES(SEQ_RESTAURANT.nextval, 4, 2, 'Pizza 21');
+INSERT INTO RESTAURANT(id_restaurant, id_locatie, id_furnizor, nume)
+VALUES(SEQ_RESTAURANT.nextval, 5, 1, 'Dristor');
+
+select * from restaurant;
+
+-- creare si inserare in tabelul CLIENTI -- 
+
+CREATE TABLE CLIENTI
+(
+id_client number(4) constraint pk_clienti primary key,
+nume varchar(25) not null,
+prenume varchar(25) not null
+);
+
+CREATE SEQUENCE SEQ_CLIENTI
+INCREMENT BY 1
+START WITH 0
+MINVALUE 0  
+MAXVALUE 100
+NOCYCLE
+NOCACHE
+ORDER;
+
+INSERT INTO CLIENTI(id_client, nume, prenume)
+Values(SEQ_CLIENTI.nextval, 'Hanghicel', 'Razvan-Mihai');
+INSERT INTO CLIENTI(id_client, nume, prenume)
+Values(SEQ_CLIENTI.nextval, 'Musk', 'Elon');
+INSERT INTO CLIENTI(id_client, nume, prenume)
+Values(SEQ_CLIENTI.nextval, 'Gaitan', 'Rares');
+INSERT INTO CLIENTI(id_client, nume, prenume)
+Values(SEQ_CLIENTI.nextval, 'Stoica', 'Vlad');
+INSERT INTO CLIENTI(id_client, nume, prenume)
+Values(SEQ_CLIENTI.nextval, 'Chifoi', 'Cristian');
+
+select * from clienti;
+
+-- creare si inserare in tabelul ANGAJATI -- 
+
+CREATE TABLE ANGAJATI
+(
+id_angajat number(3,0) constraint pk_ang primary key,
+id_restaurant number(4), constraint fk_rest FOREIGN key(id_restaurant) references RESTAURANT(id_restaurant),
+nume varchar2(25) not null,
+prenume varchar2(25) not null,
+salariu number(5) not null,
+data_angajarii date,
+tip varchar(25) not null
+);
+
+CREATE SEQUENCE SEQ_ANGAJATI
+INCREMENT BY 1
+START WITH 0
+MINVALUE 0  
+MAXVALUE 100
+NOCYCLE
+NOCACHE
+ORDER;
+
+INSERT INTO ANGAJATI(id_angajat, id_restaurant, nume, prenume, salariu, tip)
+VALUES(SEQ_ANGAJATI.nextval, 1, 'Popa', 'Mihai', 1500, 'ospatar');
+INSERT INTO ANGAJATI(id_angajat, id_restaurant, nume, prenume, salariu, tip, data_angajarii)
+VALUES(SEQ_ANGAJATI.nextval, 1, 'Fanel', 'Dorel', 1435, 'bucatar', to_date('15-04-2013','dd-mm-yyyy'));
+INSERT INTO ANGAJATI(id_angajat, id_restaurant, nume, prenume, salariu, tip, data_angajarii)
+VALUES(SEQ_ANGAJATI.nextval, 1, 'Popa', 'Dorian', 3000, 'bucatar', to_date('17-12-2019','dd-mm-yyyy'));
+INSERT INTO ANGAJATI(id_angajat, id_restaurant, nume, prenume, salariu, tip, data_angajarii)
+VALUES(SEQ_ANGAJATI.nextval, 1, 'Moraru', 'Andrei', 1600, 'ospatar', to_date('22-12-2012','dd-mm-yyyy'));
+INSERT INTO ANGAJATI(id_angajat, id_restaurant, nume, prenume, salariu, tip)
+VALUES(SEQ_ANGAJATI.nextval, 1, 'Muraru', 'Cosmin', 5000, 'bucatar');
+INSERT INTO ANGAJATI(id_angajat, id_restaurant, nume, prenume, salariu, tip, data_angajarii)
+VALUES(SEQ_ANGAJATI.nextval, 2, 'Danila', 'Prepeleac', 5555, 'ospatar', to_date('08-01-2021','dd-mm-yyyy'));
+INSERT INTO ANGAJATI(id_angajat, id_restaurant, nume, prenume, salariu, tip, data_angajarii)
+VALUES(SEQ_ANGAJATI.nextval, 3, 'Hociung', 'Vlad', 1400, 'ospatar', to_date('06-12-2007','dd-mm-yyyy'));
+INSERT INTO ANGAJATI(id_angajat, id_restaurant, nume, prenume, salariu, tip, data_angajarii)
+VALUES(SEQ_ANGAJATI.nextval, 4, 'Okukura', 'Andrew', 1500, 'bucatar', to_date('15-04-2019','dd-mm-yyyy'));
+INSERT INTO ANGAJATI(id_angajat, id_restaurant, nume, prenume, salariu, tip, data_angajarii)
+VALUES(SEQ_ANGAJATI.nextval, 5, 'Chiriac', 'Mihai', 3455, 'ospatar', to_date('15-04-2017','dd-mm-yyyy'));
+
+UPDATE ANGAJATI
+SET data_angajarii = to_date('14-03-2020','dd-mm-yyyy')
+where data_angajarii is null;
+
+select * from angajati;
+
+-- creare si inserare in tabelul MENIU --
+
+CREATE TABLE MENIU
+(
+id_meniu number(3) constraint pk_meniu primary key,
+id_restaurant number(3) not null constraint fk_rest_men references RESTAURANT(id_restaurant),
+nume VARCHAR2(25) not null
+);
+
+CREATE SEQUENCE SEQ_MENIU
+INCREMENT BY 1
+START WITH 0
+MINVALUE 0  
+MAXVALUE 100
+NOCYCLE
+NOCACHE
+ORDER;
+
+INSERT INTO MENIU(id_meniu, nume, id_restaurant)
+VALUES(SEQ_MENIU.nextval, 'Meniu cu pui', 1);
+INSERT INTO MENIU(id_meniu, nume, id_restaurant)
+VALUES(SEQ_MENIU.nextval, 'Meniu de pui', 2);
+INSERT INTO MENIU(id_meniu, nume, id_restaurant)
+VALUES(SEQ_MENIU.nextval, 'Meniu cu porc', 4);
+INSERT INTO MENIU(id_meniu, nume, id_restaurant)
+VALUES(SEQ_MENIU.nextval, 'Meniu cu vita', 1);
+INSERT INTO MENIU(id_meniu, nume, id_restaurant)
+VALUES(SEQ_MENIU.nextval, 'Sucuri', 1);
+INSERT INTO MENIU(id_meniu, nume, id_restaurant)
+VALUES(SEQ_MENIU.nextval, 'Vinuri', 1);
+INSERT INTO MENIU(id_meniu, nume, id_restaurant)
+VALUES(SEQ_MENIU.nextval, 'Sucuri', 2);
+INSERT INTO MENIU(id_meniu, nume, id_restaurant)
+VALUES(SEQ_MENIU.nextval, 'Vinuri', 3);
+INSERT INTO MENIU(id_meniu, nume, id_restaurant)
+VALUES(SEQ_MENIU.nextval, 'Meniu cu peste', 4);
+
+select * from meniu;
+
+-- creare si inserare in tabelul PRODUS --
+
+CREATE TABLE PRODUS
+(
+id_produs number(3) constraint pk_p_meniu primary key,
+id_meniu number(3) not null constraint fk_meniu references MENIU(id_meniu),
+nume VARCHAR2(25) not null
+);
+
+CREATE SEQUENCE SEQ_P_MENIU
+INCREMENT BY 1
+START WITH 0
+MINVALUE 0  
+MAXVALUE 100
+NOCYCLE
+NOCACHE
+ORDER;
+
+
+INSERT INTO PRODUS(id_produs, nume, id_meniu)
+VALUES(SEQ_P_MENIU.nextval, 'Samburesti', 5);
+INSERT INTO PRODUS(id_produs, nume, id_meniu)
+VALUES(SEQ_P_MENIU.nextval, 'Fanta', 6);
+INSERT INTO PRODUS(id_produs, nume, id_meniu)
+VALUES(SEQ_P_MENIU.nextval, 'Coca Cola', 6);
+INSERT INTO PRODUS(id_produs, nume, id_meniu)
+VALUES(SEQ_P_MENIU.nextval, 'Moet', 6);
+INSERT INTO PRODUS(id_produs, nume, id_meniu)
+VALUES(SEQ_P_MENIU.nextval, 'Cripsy de pui', 8);
+INSERT INTO PRODUS(id_produs, nume, id_meniu)
+VALUES(SEQ_P_MENIU.nextval, 'Paste cu somon', 8);
+INSERT INTO PRODUS(id_produs, nume, id_meniu)
+VALUES(SEQ_P_MENIU.nextval, 'Tartar de vita', 3);
+
+select * from PRODUS;
+
+-- creare si inserare in tabelul SUBCOMANDA --
+
+CREATE TABLE SUBCOMANDA
+(
+id_subcomanda number(3) constraint pk_subcomanda primary key,
+id_produs number(3) not null constraint fk_produs references PRODUS(id_produs),
+cantitate number(2) not null CHECK (cantitate > 0)
+);
+
+CREATE SEQUENCE SEQ_SUBCOMANDA
+INCREMENT BY 1
+START WITH 0
+MINVALUE 0  
+MAXVALUE 100
+NOCYCLE
+NOCACHE
+ORDER;
+
+
+INSERT INTO SUBCOMANDA(id_subcomanda,cantitate, id_produs)
+Values(SEQ_CMD_PROD.nextval, 3, 3);
+INSERT INTO SUBCOMANDA(id_subcomanda,cantitate, id_produs)
+Values(SEQ_CMD_PROD.nextval, 1, 1);
+INSERT INTO SUBCOMANDA(id_subcomanda,cantitate, id_produs)
+Values(SEQ_CMD_PROD.nextval, 4, 5);
+INSERT INTO SUBCOMANDA(id_subcomanda,cantitate, id_produs)
+Values(SEQ_CMD_PROD.nextval, 5, 2);
+INSERT INTO SUBCOMANDA(id_subcomanda,cantitate, id_produs)
+Values(SEQ_CMD_PROD.nextval, 1, 4);
+select * from SUBCOMANDA;
+
+-- creare si inserare in tabelul COMANDA --
+
+CREATE TABLE COMANDA
+(
+id_comanda number(3) constraint pk_comanda primary key
+);
+
+CREATE SEQUENCE SEQ_COMANDA
+INCREMENT BY 1
+START WITH 0
+MINVALUE 0  
+MAXVALUE 100
+NOCYCLE
+NOCACHE
+ORDER;
+
+INSERT INTO COMANDA(id_comanda)
+VALUES(SEQ_COMANDA.nextval);
+INSERT INTO COMANDA(id_comanda)
+VALUES(SEQ_COMANDA.nextval);
+INSERT INTO COMANDA(id_comanda)
+VALUES(SEQ_COMANDA.nextval);
+INSERT INTO COMANDA(id_comanda)
+VALUES(SEQ_COMANDA.nextval);
+INSERT INTO COMANDA(id_comanda)
+VALUES(SEQ_COMANDA.nextval);
+
+select * from comanda
+
+-- creare si inserare in tabelul COMANDA_SUBCOMANDA --
+
+CREATE TABLE COMANDA_SUBCOMANDA
+(
+id_comanda_subcomanda number(3) not null,
+id_comanda number(3) not null constraint fk_comanda1 references COMANDA(id_comanda),
+id_subcomanda number(3) not null constraint fk_subcomanda1 references SUBCOMANDA(id_subcomanda),
+constraint pk_COMANDA_SUBCOMANDA primary key (id_comanda_subcomanda, id_comanda, id_subcomanda)
+);
+
+select * from comanda_subcomanda
+
+CREATE SEQUENCE SEQ_COMANDA_SUBCOMANDA
+INCREMENT BY 1
+START WITH 0
+MINVALUE 0  
+MAXVALUE 100
+NOCYCLE
+NOCACHE
+ORDER;
+
+select * from COMANDA_SUBCOMANDA;
+INSERT INTO COMANDA_SUBCOMANDA(id_comanda_subcomanda, id_comanda, id_subcomanda)
+Values(SEQ_COMANDA_SUBCOMANDA.nextval,1,1);
+INSERT INTO COMANDA_SUBCOMANDA(id_comanda_subcomanda, id_comanda, id_subcomanda)
+Values(SEQ_COMANDA_SUBCOMANDA.nextval,3,2);
+INSERT INTO COMANDA_SUBCOMANDA(id_comanda_subcomanda, id_comanda, id_subcomanda)
+Values(SEQ_COMANDA_SUBCOMANDA.nextval,4,3);
+
+
+INSERT INTO COMANDA_SUBCOMANDA(id_comanda_subcomanda, id_comanda, id_subcomanda)
+Values(SEQ_COMANDA_SUBCOMANDA.nextval,3,3);
+INSERT INTO COMANDA_SUBCOMANDA(id_comanda_subcomanda, id_comanda, id_subcomanda)
+Values(SEQ_COMANDA_SUBCOMANDA.nextval,3,1);
+INSERT INTO COMANDA_SUBCOMANDA(id_comanda_subcomanda, id_comanda, id_subcomanda)
+Values(SEQ_COMANDA_SUBCOMANDA.nextval,4,3);
+INSERT INTO COMANDA_SUBCOMANDA(id_comanda_subcomanda, id_comanda, id_subcomanda)
+Values(SEQ_COMANDA_SUBCOMANDA.nextval,1,2);
+INSERT INTO COMANDA_SUBCOMANDA(id_comanda_subcomanda, id_comanda, id_subcomanda)
+Values(SEQ_COMANDA_SUBCOMANDA.nextval,2,3);
+INSERT INTO COMANDA_SUBCOMANDA(id_comanda_subcomanda, id_comanda, id_subcomanda)
+Values(SEQ_COMANDA_SUBCOMANDA.nextval,3,1);
+INSERT INTO COMANDA_SUBCOMANDA(id_comanda_subcomanda, id_comanda, id_subcomanda)
+Values(SEQ_COMANDA_SUBCOMANDA.nextval,1,7);
+
+select * from comanda_subcomanda;
+
+-- creare si inserare in tabelul NOTA_PLATA --
+
+CREATE TABLE NOTA_PLATA
+(
+id_nota_plata number(3) constraint pk_nota_plata primary key,
+id_comanda number(3) not null constraint fk_comanda references COMANDA(id_comanda)
+);
+
+CREATE SEQUENCE SEQ_NOTA_PLATA
+INCREMENT by 1
+START WITH 0
+MINVALUE 0
+MAXVALUE 100
+NOCYCLE
+NOCACHE
+ORDER;
+
+INSERT INTO NOTA_PLATA(id_nota_plata, id_comanda)
+VALUES(SEQ_NOTA_PLATA.nextval, 2);
+INSERT INTO NOTA_PLATA(id_nota_plata, id_comanda)
+VALUES(SEQ_NOTA_PLATA.nextval, 1);
+INSERT INTO NOTA_PLATA(id_nota_plata, id_comanda)
+VALUES(SEQ_NOTA_PLATA.nextval, 3);
+INSERT INTO NOTA_PLATA(id_nota_plata, id_comanda)
+VALUES(SEQ_NOTA_PLATA.nextval, 5);
+INSERT INTO NOTA_PLATA(id_nota_plata, id_comanda)
+VALUES(SEQ_NOTA_PLATA.nextval, 4);
+
+select * from NOTA_PLATA;
+
+-- creare si inserare in tabelul COMANDA_CLIENT_OSPATAR --
+
+CREATE TABLE COMANDA_CLIENT_OSPATAR
+(
+id_angajat number(3) not null constraint fk_cco_ang references ANGAJATI(id_angajat),
+id_client number(3) not null constraint fk_cco_client references CLIENTI(id_client),
+id_comanda number(3) not null constraint fk_cco_comanda references COMANDA(id_comanda),
+constraint pk_cco primary key(id_angajat, id_client, id_comanda)
+);
+
+select * from angajati;
+
+INSERT INTO COMANDA_CLIENT_OSPATAR (id_angajat, id_client, id_comanda)
+values(9,1,1);
+
+INSERT INTO COMANDA_CLIENT_OSPATAR (id_angajat, id_client, id_comanda)
+values(13,2,1);
+INSERT INTO COMANDA_CLIENT_OSPATAR (id_angajat, id_client, id_comanda)
+values(14,3,2);
+INSERT INTO COMANDA_CLIENT_OSPATAR (id_angajat, id_client, id_comanda)
+values(17,2,5);
+INSERT INTO COMANDA_CLIENT_OSPATAR (id_angajat, id_client, id_comanda)
+values(16,3,2);
+INSERT INTO COMANDA_CLIENT_OSPATAR (id_angajat, id_client, id_comanda)
+values(12,4,1);
+INSERT INTO COMANDA_CLIENT_OSPATAR (id_angajat, id_client, id_comanda)
+values(11,2,1);
+INSERT INTO COMANDA_CLIENT_OSPATAR (id_angajat, id_client, id_comanda)
+values(10,3,3);
+INSERT INTO COMANDA_CLIENT_OSPATAR (id_angajat, id_client, id_comanda)
+values(9,2,3);
+INSERT INTO COMANDA_CLIENT_OSPATAR (id_angajat, id_client, id_comanda)
+values(10,3,1);
+INSERT INTO COMANDA_CLIENT_OSPATAR (id_angajat, id_client, id_comanda)
+values(15,2,2);
+
+select * from COMANDA_CLIENT_OSPATAR;
+
